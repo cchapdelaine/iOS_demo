@@ -11,12 +11,23 @@ import QuartzCore
 import SceneKit
 
 class GameViewController: UIViewController {
+    
+    let sphere = SCNSphere(radius: 1.0)
+    var sphereNode = SCNNode()
+    
+    let force = SCNVector3(x: 0, y: 10 , z: 0)
+    let position = SCNVector3(x: 0.05, y: 0.05, z: 0.05)
+    
+    let physicsBodySphere = SCNPhysicsBody(type: .dynamic, shape: nil)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        sphereNode = SCNNode(geometry: sphere)
+        
         // create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        //let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        let scene = SCNScene()
         
         // create and add a camera to the scene
         let cameraNode = SCNNode()
@@ -24,7 +35,7 @@ class GameViewController: UIViewController {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 30)
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -40,13 +51,32 @@ class GameViewController: UIViewController {
         ambientLightNode.light!.color = UIColor.darkGray
         scene.rootNode.addChildNode(ambientLightNode)
         
-        // add a sphere
-        let sphere = SCNSphere(radius: 1.0)
+        // Set sphere's properties
         sphere.firstMaterial?.diffuse.contents = UIColor.red
-        let sphereNode = SCNNode(geometry: sphere)
+
         sphereNode.position = SCNVector3(x: 0.0, y: 3.0, z: 0.0)
+
+        // Add properties to the physics body that governs the object
+        physicsBodySphere.restitution = 1.0
+        physicsBodySphere.friction = 0.0
+        
+        // Set the sphere's physics body
+        sphereNode.physicsBody = physicsBodySphere
         scene.rootNode.addChildNode(sphereNode)
         
+        let ground = SCNBox(width: 10, height: 1, length: 10, chamferRadius: 1)
+        ground.firstMaterial?.diffuse.contents = UIColor.yellow
+        let groundNode = SCNNode(geometry: ground)
+        groundNode.position = SCNVector3(x: 0.0, y: -3.0, z: 0.0)
+        
+        let physicsBody = SCNPhysicsBody(type: .static, shape: nil)
+        physicsBody.restitution = 1.0
+        physicsBody.friction = 0.0
+        
+        groundNode.physicsBody = physicsBody
+        scene.rootNode.addChildNode(groundNode)
+        
+        /*
         // add a capsule
         let capsule = SCNCapsule()
         // change color
@@ -56,14 +86,21 @@ class GameViewController: UIViewController {
         // change position
         capsuleNode.position = SCNVector3(x: 0.0, y: -3.0, z: 0.0)
         // add to the scene
-        scene.rootNode.addChildNode(capsuleNode)
         
+        capsuleNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 0, z: 1, duration: 2)))
+        //capsuleNode.runAction(SCNAction.repeatForever(SCNAction.moveBy(x: 1, y: 1, z: 1, duration: 1)))
+        
+        capsuleNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
+        
+        scene.rootNode.addChildNode(capsuleNode)
+        */
+        /*
         // retrieve the ship node
         let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
         
         // animate the 3d object
         ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
-        
+        */
         // retrieve the SCNView
         let scnView = self.view as! SCNView
         
@@ -97,6 +134,10 @@ class GameViewController: UIViewController {
             // retrieved the first clicked object
             let result = hitResults[0]
             
+            // Add force to sphere if clicked
+            if result.node == sphereNode {
+                physicsBodySphere.applyForce(force, at: position, asImpulse: true)
+            }
             // get its material
             let material = result.node.geometry!.firstMaterial!
             
