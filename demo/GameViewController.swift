@@ -19,6 +19,7 @@ class GameViewController: UIViewController {
     let force = SCNVector3(x: 0, y: 10 , z: 0)
     let position = SCNVector3(x: 0.05, y: 0.05, z: 0.05)
     
+    // .dynamic means that the physics body is affected to the laws of Physics
     let physicsBodySphere = SCNPhysicsBody(type: .dynamic, shape: nil)
 
     override func viewDidLoad() {
@@ -28,7 +29,6 @@ class GameViewController: UIViewController {
         sphereNode = SCNNode(geometry: sphere)
         
         // create a new scene
-        //let scene = SCNScene(named: "art.scnassets/ship.scn")!
         let scene = SCNScene()
         
         // create and add a camera to the scene
@@ -58,7 +58,7 @@ class GameViewController: UIViewController {
         sphereNode.position = SCNVector3(x: 0.0, y: 3.0, z: 0.0)
 
         // Add properties to the physics body that governs the object
-        physicsBodySphere.restitution = 1.0
+        physicsBodySphere.restitution = 1.0 // How much the object bounces (0.0 to 1.0)
         physicsBodySphere.friction = 0.0
         
         // Set the sphere's physics body
@@ -70,6 +70,8 @@ class GameViewController: UIViewController {
         let groundNode = SCNNode(geometry: ground)
         groundNode.position = SCNVector3(x: 0.0, y: -3.0, z: 0.0)
         
+        // Setting up a physics body for the ground. ".static" means that this object won't be
+        // affected by the laws of physics.
         let physicsBody = SCNPhysicsBody(type: .static, shape: nil)
         physicsBody.restitution = 1.0
         physicsBody.friction = 0.0
@@ -105,6 +107,7 @@ class GameViewController: UIViewController {
         // check what nodes are tapped
         let p = gestureRecognize.location(in: scnView)
         let hitResults = scnView.hitTest(p, options: [:])
+        
         // check that we clicked on at least one object
         if hitResults.count > 0 {
             // retrieved the first clicked object
