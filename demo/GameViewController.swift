@@ -12,6 +12,7 @@ import SceneKit
 
 class GameViewController: UIViewController {
     
+    // create a sphere
     let sphere = SCNSphere(radius: 1.0)
     var sphereNode = SCNNode()
     
@@ -23,6 +24,7 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // create a sphere node
         sphereNode = SCNNode(geometry: sphere)
         
         // create a new scene
@@ -53,7 +55,6 @@ class GameViewController: UIViewController {
         
         // Set sphere's properties
         sphere.firstMaterial?.diffuse.contents = UIColor.red
-
         sphereNode.position = SCNVector3(x: 0.0, y: 3.0, z: 0.0)
 
         // Add properties to the physics body that governs the object
@@ -76,31 +77,6 @@ class GameViewController: UIViewController {
         groundNode.physicsBody = physicsBody
         scene.rootNode.addChildNode(groundNode)
         
-        /*
-        // add a capsule
-        let capsule = SCNCapsule()
-        // change color
-        capsule.firstMaterial?.diffuse.contents = UIColor.green
-        // make a node
-        let capsuleNode = SCNNode(geometry: capsule)
-        // change position
-        capsuleNode.position = SCNVector3(x: 0.0, y: -3.0, z: 0.0)
-        // add to the scene
-        
-        capsuleNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 0, z: 1, duration: 2)))
-        //capsuleNode.runAction(SCNAction.repeatForever(SCNAction.moveBy(x: 1, y: 1, z: 1, duration: 1)))
-        
-        capsuleNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
-        
-        scene.rootNode.addChildNode(capsuleNode)
-        */
-        /*
-        // retrieve the ship node
-        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-        
-        // animate the 3d object
-        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
-        */
         // retrieve the SCNView
         let scnView = self.view as! SCNView
         
